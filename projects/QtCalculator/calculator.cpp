@@ -16,7 +16,7 @@ QString Calculator::calculate(QString expression)
     QStack<QString> num;
 
     for (int i = 0; i < expression.length(); i++) {
-        QChar c = expression.at(i);
+        char c = expression.at(i).toLatin1();
         switch (c) {
         case '+':
             op.push(c);
@@ -37,10 +37,11 @@ QString Calculator::calculate(QString expression)
             op.push(c);
             break;
         default:
-            if (num.top() == ".")
+//            if (num.top() == ".")
             break;
         }
     }
+    return "";
 }
 
 
