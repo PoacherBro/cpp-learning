@@ -62,7 +62,7 @@ void LanTcpServerHanlder::sendResponse(QString parm)
 {
 	QByteArray block;
 	QDataStream out(&block, QIODevice::WriteOnly);
-	out.setVersion(QDataStream::Qt_4_0);
+	out.setVersion(QDataStream::Qt_5_5);
 	out << (quint16)0;
 	out << parm;
 	out.device()->seek(0);
