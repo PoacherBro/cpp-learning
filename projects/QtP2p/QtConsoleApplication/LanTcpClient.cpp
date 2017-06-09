@@ -9,6 +9,7 @@ LanTcpClient::LanTcpClient(QObject* parent)
 	m_tcpSocket = new QTcpSocket(this);
 	connect(m_tcpSocket, SIGNAL(readyRead()), this, SLOT(readyReceiveBlock()));
 	connect(m_tcpSocket, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(handleSocketError(QAbstractSocket::SocketError)));
+	connect(m_tcpSocket, SIGNAL(disconnected()), this, SLOT(disconnected()));
 }
 
 LanTcpClient::~LanTcpClient()
@@ -77,19 +78,18 @@ void LanTcpClient::readyReceiveBlock()
 
 	QString fileName;
 	// get sending file name
-	in >> fileName;
+	// in >> fileName;
 	QByteArray line = m_tcpSocket->readAll();
 
 	QString filePath = "."; // your file path for receiving  
-	fileName = fileName.section("/", -1);
+	fileName = "README.md"; // fileName.section("/", -1);
 	QFile target(filePath + "/" + fileName);
 
-	if (!target.open(QIODevice::WriteOnly)) {
+	if (!target.open(QIODevice::Append | QIODevice::WriteOnly)) {
 		qDebug() << "Can't open file for written";
 		return;
 	}
 	target.write(line);
-
 	target.close();
 	m_tcpSocket->disconnectFromHost();
 	m_tcpSocket->waitForDisconnected();
@@ -98,4 +98,10 @@ void LanTcpClient::readyReceiveBlock()
 void LanTcpClient::handleSocketError(QAbstractSocket::SocketError socketError)
 {
 
+}
+
+void LanTcpClient::disconnected()
+{
+	qDebug() << "Disconnect from server!";
+	m_tcpSocket->deleteLater();
 }

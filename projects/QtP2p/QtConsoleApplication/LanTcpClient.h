@@ -24,6 +24,7 @@ private:
 private slots:
 	void readyReceiveBlock();
 	void handleSocketError(QAbstractSocket::SocketError socketError);
+	void disconnected();
 };
 
 #endif

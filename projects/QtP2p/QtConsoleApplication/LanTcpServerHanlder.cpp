@@ -1,6 +1,8 @@
 #include "LanTcpServerHandler.h"
 
 #include <QDataStream>
+#include <QFile>
+#include <QDir>
 
 LanTcpServerHanlder::LanTcpServerHanlder(qintptr socketDescriptor, QObject* parent /* = 0 */) :
 	QThread(parent)
@@ -47,7 +49,7 @@ void LanTcpServerHanlder::readyRead()
 	in >> readData;
 
 	qDebug() << socketDescriptor << " data in: " << readData;
-	sendResponse("Received!");
+	sendResponse(readData);
 }
 
 void LanTcpServerHanlder::disconnected()
@@ -63,13 +65,28 @@ void LanTcpServerHanlder::sendResponse(QString parm)
 	QByteArray block;
 	QDataStream out(&block, QIODevice::WriteOnly);
 	out.setVersion(QDataStream::Qt_5_5);
-	out << (quint16)0;
-	out << parm;
-	out.device()->seek(0);
-	out << (quint16)(block.size() - sizeof(quint16));
 
-	m_socket->write(block);
-	m_socket->flush();
+	QString filePath = QDir::currentPath() + QDir::separator() + parm;
+	QFile file(filePath);
+	if (!file.open(QIODevice::ReadOnly))
+	{
+		qDebug() << "Cannot read file " << filePath;
+		return;
+	}
+	while (1)
+	{
+		block = file.read(64 * 1024);
+		if (block.size() == 0)
+			break;
+
+		out << (quint16)0;
+		out << block;
+		out.device()->seek(0);
+		out << (quint16)(block.size() - sizeof(quint16));
+		m_socket->write(block);
+		qDebug() << "Send file with size: " << block.size();
+	}
+	file.close();
 //	m_socket->disconnectFromHost();
 	m_socket->waitForDisconnected();
 }

@@ -50,9 +50,6 @@ void LanSession::processReceivedBroadcast(QByteArray senderDatagram, QHostAddres
 		// 2. ·¢ËÍ»Ø¸´
 		m_udpSocket->writeDatagram(MESSAGE_TYPE_BROADCAST_FEEDBACK.toLatin1(), senderAddress, senderPort);
 	//}
-
-	LanTcpClient client;
-	client.startDownload("ABC123");
 }
 
 void LanSession::receiveFeedback()
@@ -73,6 +70,8 @@ void LanSession::receiveFeedback()
 	else if (receivedData.startsWith(MESSAGE_TYPE_BROADCAST_FEEDBACK)) 
 	{
 		qDebug() << "Received broadcast feedback from " << senderAddress.toString() << ":" << QString::number(senderPort);
+		LanTcpClient client;
+		client.startDownload("README.md");
 	}
 }
 
