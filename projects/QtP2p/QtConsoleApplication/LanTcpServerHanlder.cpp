@@ -3,6 +3,7 @@
 #include <QDataStream>
 #include <QFile>
 #include <QDir>
+#include <QTextCodec>
 
 LanTcpServerHanlder::LanTcpServerHanlder(qintptr socketDescriptor, QObject* parent /* = 0 */) :
 	QThread(parent)
@@ -26,7 +27,6 @@ void LanTcpServerHanlder::run()
 	connect(m_socket, SIGNAL(disconnected()), this, SLOT(disconnected()));
 
 	qDebug() << socketDescriptor << " Client connected";
-
 	exec();
 }
 
@@ -75,18 +75,22 @@ void LanTcpServerHanlder::sendResponse(QString parm)
 	}
 	while (1)
 	{
-		block = file.read(64 * 1024);
-		if (block.size() == 0)
+		block.clear();
+		QByteArray fileContent;
+		fileContent = file.read(64 * 1024);
+		if (fileContent.size() == 0)
 			break;
 
 		out << (quint16)0;
-		out << block;
+		out << parm;
+		out << fileContent;
 		out.device()->seek(0);
 		out << (quint16)(block.size() - sizeof(quint16));
-		m_socket->write(block);
-		qDebug() << "Send file with size: " << block.size();
+		qDebug() << "Send file with size: " << m_socket->write(block);
+
+		//m_socket->waitForBytesWritten();
+		m_socket->flush();
 	}
 	file.close();
-//	m_socket->disconnectFromHost();
-	m_socket->waitForDisconnected();
+	m_socket->disconnectFromHost();
 }

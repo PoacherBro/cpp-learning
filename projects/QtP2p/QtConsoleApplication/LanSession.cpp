@@ -49,7 +49,7 @@ void LanSession::processReceivedBroadcast(QByteArray senderDatagram, QHostAddres
 
 		// 2. ·¢ËÍ»Ø¸´
 		m_udpSocket->writeDatagram(MESSAGE_TYPE_BROADCAST_FEEDBACK.toLatin1(), senderAddress, senderPort);
-	//}
+//	}
 }
 
 void LanSession::receiveFeedback()
@@ -70,8 +70,9 @@ void LanSession::receiveFeedback()
 	else if (receivedData.startsWith(MESSAGE_TYPE_BROADCAST_FEEDBACK)) 
 	{
 		qDebug() << "Received broadcast feedback from " << senderAddress.toString() << ":" << QString::number(senderPort);
-		LanTcpClient client;
-		client.startDownload("README.md");
+// 		LanTcpClient client;
+// 		client.startDownload("README.md");
+		startTcpDownload("QtConsoleApplication.exe");
 	}
 }
 
@@ -90,4 +91,112 @@ void LanSession::getLocalIp4()
 			}
 		}
 	}
+}
+
+void LanSession::startTcpDownload(QString param)
+{
+	qDebug() << "Start download " << param;
+	QList<QString*> lanServerList = DownloadResource::getResourceListPerType(P2PConstants::DownloadResourceType::LAN);
+	if (!lanServerList.isEmpty())
+	{
+		foreach(QString *lanServer, lanServerList)
+		{
+			QTcpSocket* client = new QTcpSocket(this);
+			m_tcpClients.append(client);
+			QByteArray* buffer = new QByteArray();
+			quint16* size = new quint16(0);
+
+			buffers.insert(client, buffer);
+			receivedSize.insert(client, size);
+
+			connect(client, SIGNAL(readyRead()), this, SLOT(readyReadTcpFeedback()));
+			connect(client, SIGNAL(disconnected()), this, SLOT(tcpDisconnected()));
+
+			QStringList lanServerInfo = lanServer->split(":");
+			QString serverHost = lanServerInfo.at(0);
+			client->connectToHost(QHostAddress(serverHost), LAN_TCP_SERVER_PORT);
+			if (client->waitForConnected(5 * 1000)) // wait for 5s
+			{
+				qDebug() << QString("Connected to server %1:%2").arg(serverHost, QString::number(LAN_TCP_SERVER_PORT));
+				sendData(client, param);
+				break;
+			}
+		}
+	}
+	else
+	{
+		qDebug() << "Available IP list is empty!!!";
+	}
+}
+
+void LanSession::sendData(QTcpSocket* socket, QString content)
+{
+	QByteArray data;
+	QDataStream out(&data, QIODevice::WriteOnly);
+	out.setVersion(QDataStream::Qt_5_5);
+	out << (quint16)0;
+	out << content;
+	out.device()->seek(0);
+	out << (quint16)(data.size() - sizeof(quint16));
+
+	socket->write(data);
+	socket->flush();
+}
+
+void LanSession::readyReadTcpFeedback()
+{
+	QTcpSocket* client = qobject_cast<QTcpSocket*>(sender());
+	quint16 s = 0;
+	quint16 sizeOfQuint16 = sizeof(quint16);
+
+	QDataStream in(client);
+	in.setVersion(QDataStream::Qt_5_5);
+
+	if (client->bytesAvailable() < sizeOfQuint16)
+		return;
+
+	in >> s;
+	qDebug() << "Header declared size: " << s;
+	qDebug() << "Available size: " << client->bytesAvailable();
+
+	if (client->bytesAvailable() < s)
+		return;
+
+	// get sending file name
+	QString fileName;
+	in >> fileName;
+
+	QByteArray line = client->readAll();
+	qDebug() << "Received size: " << line.size();
+
+	QString filePath = QDir::currentPath() + QDir::separator() + "app" + QDir::separator();
+	QFile target(filePath + fileName);
+	qDebug() << target.fileName();
+	if (!target.open(QIODevice::Append)) {
+		qDebug() << "Can't open file for written";
+		return;
+	}
+	QTextStream out(&target);
+	out << line;
+//	target.write(line);
+	target.close();
+//	client->disconnectFromHost();
+//	client->waitForDisconnected();
+}
+
+void LanSession::tcpDisconnected()
+{
+	QTcpSocket* client = qobject_cast<QTcpSocket*>(sender());
+	qDebug() << "Disconnect from server!";
+	client->deleteLater();
+	quint16* size = receivedSize.value(client);
+	delete size;
+}
+
+quint16 LanSession::arrayToInt(QByteArray source)
+{
+	quint16 temp;
+	QDataStream data(&source, QIODevice::ReadWrite);
+	data >> temp;
+	return temp;
 }

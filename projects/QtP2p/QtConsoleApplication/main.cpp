@@ -12,6 +12,6 @@ int main(int argc, char *argv[])
 // 	lanServer.startServer(LAN_TCP_SERVER_PORT);
  	LanSession lanSession;
 // 	LanTcpClient client;
-// 	client.startDownload("ABC123");
+// 	client.startDownload("README.md");
 	return a.exec();
 }

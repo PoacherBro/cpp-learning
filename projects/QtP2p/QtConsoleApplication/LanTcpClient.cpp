@@ -97,7 +97,7 @@ void LanTcpClient::readyReceiveBlock()
 
 void LanTcpClient::handleSocketError(QAbstractSocket::SocketError socketError)
 {
-
+	qDebug() << "Error" << socketError;
 }
 
 void LanTcpClient::disconnected()
