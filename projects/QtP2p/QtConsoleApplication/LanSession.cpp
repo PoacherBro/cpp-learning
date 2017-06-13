@@ -45,7 +45,7 @@ void LanSession::processReceivedBroadcast(QByteArray senderDatagram, QHostAddres
 		QString senderIp = senderAddress.toString();
 		qDebug() << tr("Receive from %1:%2 with data: %3").arg(senderAddress.toString(), QString::number(senderPort), senderDatagram.data());
 		// 1. 保存对方地址
-		DownloadResource::addResource(P2PConstants::DownloadResourceType::LAN, senderIp, senderPort);
+		DownloadResource::addResource(P2PConstants::LAN, senderIp, senderPort);
 
 		// 2. 发送回复
 		m_udpSocket->writeDatagram(MESSAGE_TYPE_BROADCAST_FEEDBACK.toLatin1(), senderAddress, senderPort);
@@ -97,7 +97,7 @@ void LanSession::getLocalIp4()
 void LanSession::startTcpDownload(QString param)
 {
 	qDebug() << "Start download " << param;
-	QList<QString*> lanServerList = DownloadResource::getResourceListPerType(P2PConstants::DownloadResourceType::LAN);
+	QList<QString*> lanServerList = DownloadResource::getResourceListPerType(P2PConstants::LAN);
 	if (!lanServerList.isEmpty())
 	{
 		foreach(QString *lanServer, lanServerList)
@@ -168,14 +168,12 @@ void LanSession::readyReadTcpFeedback()
 	// get sending file name
 	QString fileName;
 	in >> fileName;
-	if (fileName.isEmpty())
-	{
-		in >> fileName;
-	}
+
 	QByteArray line;
 	in >> line;
 	qDebug() << "Received size: " << line.size();
 	*expectSize = 0;
+
 	QString filePath = QDir::currentPath() + QDir::separator() + "app" + QDir::separator();
 	QFile target(filePath + fileName);
 	qDebug() << target.fileName();

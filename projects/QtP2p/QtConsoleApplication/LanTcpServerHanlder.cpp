@@ -76,28 +76,31 @@ void LanTcpServerHanlder::sendResponse(QString parm)
 	while (1)
 	{
 		block.clear();
+		out.device()->seek(0);
+
+		QString fileName(parm);
 		QByteArray fileContent;
 		fileContent = file.read(64 * 1024);
 		if (fileContent.size() == 0)
 			break;
 
 		out << (quint32)0;
-		out << parm;
+		out << fileName;
 		out << fileContent;
-		out.device()->seek(0);
 		int blockSize = block.size();
-		qDebug() << "Block size: " << blockSize;
+		qDebug() << "File name size: " << fileName.size();
 		qDebug() << "File content size: " << fileContent.size();
 		if (blockSize < 0)
 			break;
 
-		quint32 contentSize = quint32(blockSize - sizeof(quint32));
+		quint32 contentSize = quint32(blockSize) - sizeof(quint32);
 		qDebug() << "Content size: " << contentSize;
+		out.device()->seek(0);
 		out << contentSize;
+
 		qDebug() << "Send file with size: " << m_socket->write(block);
 
-		//m_socket->waitForBytesWritten();
-		m_socket->flush();
+		m_socket->waitForBytesWritten();
 	}
 	file.close();
 	m_socket->disconnectFromHost();
