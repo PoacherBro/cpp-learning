@@ -4,6 +4,8 @@
 #include "QtCore"
 #include "QtNetwork"
 
+#include "LanTcpClient.h"
+
 class LanSession : public QObject
 {
 	Q_OBJECT
@@ -17,9 +19,7 @@ private:
 	static const quint16 port = 65001;
 
 	QUdpSocket* m_udpSocket;
-	QList<QTcpSocket*> m_tcpClients;
-	QHash<QTcpSocket*, QByteArray*> buffers;
-	QHash<QTcpSocket*, quint16*> receivedSize;
+	QHash<QTcpSocket*, quint32*> m_expectedSize;
 	QHostAddress m_localIp4;
 
 private:
@@ -33,8 +33,6 @@ private:
 
 	void sendData(QTcpSocket* socket, QString content);
 	void startTcpDownload(QString param);
-
-	quint16 arrayToInt(QByteArray source);
 
 private slots:
 	void receiveFeedback();

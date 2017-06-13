@@ -70,9 +70,10 @@ void LanSession::receiveFeedback()
 	else if (receivedData.startsWith(MESSAGE_TYPE_BROADCAST_FEEDBACK)) 
 	{
 		qDebug() << "Received broadcast feedback from " << senderAddress.toString() << ":" << QString::number(senderPort);
-// 		LanTcpClient client;
+// 		LanTcpClient client(this);
+// 		clients.append(&client);
 // 		client.startDownload("README.md");
-		startTcpDownload("QtConsoleApplication.exe");
+		startTcpDownload(QString::fromLocal8Bit("QtConsoleApplication.exe"));
 	}
 }
 
@@ -102,12 +103,9 @@ void LanSession::startTcpDownload(QString param)
 		foreach(QString *lanServer, lanServerList)
 		{
 			QTcpSocket* client = new QTcpSocket(this);
-			m_tcpClients.append(client);
-			QByteArray* buffer = new QByteArray();
-			quint16* size = new quint16(0);
+			quint32* size = new quint32(0);
 
-			buffers.insert(client, buffer);
-			receivedSize.insert(client, size);
+			m_expectedSize.insert(client, size);
 
 			connect(client, SIGNAL(readyRead()), this, SLOT(readyReadTcpFeedback()));
 			connect(client, SIGNAL(disconnected()), this, SLOT(tcpDisconnected()));
@@ -146,16 +144,21 @@ void LanSession::sendData(QTcpSocket* socket, QString content)
 void LanSession::readyReadTcpFeedback()
 {
 	QTcpSocket* client = qobject_cast<QTcpSocket*>(sender());
-	quint16 s = 0;
-	quint16 sizeOfQuint16 = sizeof(quint16);
+	quint32* expectSize = m_expectedSize.value(client);
+	quint32 s = *expectSize;
+	quint32 sizeOfQuint = sizeof(quint32);
 
 	QDataStream in(client);
 	in.setVersion(QDataStream::Qt_5_5);
 
-	if (client->bytesAvailable() < sizeOfQuint16)
-		return;
+	if (s == 0)
+	{
+		if (client->bytesAvailable() < sizeOfQuint)
+			return;
 
-	in >> s;
+		in >> s;
+		*expectSize = s;
+	}
 	qDebug() << "Header declared size: " << s;
 	qDebug() << "Available size: " << client->bytesAvailable();
 
@@ -165,10 +168,14 @@ void LanSession::readyReadTcpFeedback()
 	// get sending file name
 	QString fileName;
 	in >> fileName;
-
-	QByteArray line = client->readAll();
+	if (fileName.isEmpty())
+	{
+		in >> fileName;
+	}
+	QByteArray line;
+	in >> line;
 	qDebug() << "Received size: " << line.size();
-
+	*expectSize = 0;
 	QString filePath = QDir::currentPath() + QDir::separator() + "app" + QDir::separator();
 	QFile target(filePath + fileName);
 	qDebug() << target.fileName();
@@ -176,9 +183,9 @@ void LanSession::readyReadTcpFeedback()
 		qDebug() << "Can't open file for written";
 		return;
 	}
-	QTextStream out(&target);
-	out << line;
-//	target.write(line);
+// 	QDataStream out(&target);
+// 	out << line;
+	target.write(line);
 	target.close();
 //	client->disconnectFromHost();
 //	client->waitForDisconnected();
@@ -189,14 +196,6 @@ void LanSession::tcpDisconnected()
 	QTcpSocket* client = qobject_cast<QTcpSocket*>(sender());
 	qDebug() << "Disconnect from server!";
 	client->deleteLater();
-	quint16* size = receivedSize.value(client);
+	quint32* size = m_expectedSize.value(client);
 	delete size;
-}
-
-quint16 LanSession::arrayToInt(QByteArray source)
-{
-	quint16 temp;
-	QDataStream data(&source, QIODevice::ReadWrite);
-	data >> temp;
-	return temp;
 }
