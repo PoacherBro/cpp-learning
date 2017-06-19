@@ -19,7 +19,7 @@ void LanSession::init()
 {
 	getLocalIp4();
 	m_udpSocket = new QUdpSocket(this);
-	m_udpSocket->bind(QHostAddress::AnyIPv4, port, QUdpSocket::ShareAddress | QUdpSocket::ReuseAddressHint);
+	m_udpSocket->bind(m_localIp4, port, QUdpSocket::ShareAddress | QUdpSocket::ReuseAddressHint);
 	connect(m_udpSocket, SIGNAL(readyRead()), this, SLOT(receiveFeedback()));
 
 	broadcast();
@@ -28,7 +28,7 @@ void LanSession::init()
 void LanSession::broadcast()
 {
 	QByteArray datagram = MESSAGE_TYPE_BROADCAST.toLatin1();
-	m_udpSocket->writeDatagram(datagram.data(), datagram.size(), QHostAddress::Broadcast, m_udpSocket->localPort());
+	m_udpSocket->writeDatagram(datagram.data(), datagram.size(), QHostAddress("255.255.255.255"), m_udpSocket->localPort());
 	qDebug() << "Start broadcast...";
 }
 
@@ -36,20 +36,20 @@ void LanSession::processReceivedBroadcast(QByteArray senderDatagram, QHostAddres
 {
 	quint32 senderIPv4 = senderAddress.toIPv4Address();
 
-// 	if (senderIPv4 == m_localIp4.toIPv4Address())
-// 	{
-// 		qDebug() << "Received from local broadcast";
-// 	}
-// 	else 
-// 	{
+ 	if (senderIPv4 == m_localIp4.toIPv4Address())
+ 	{
+ 		qDebug() << "Received from local broadcast";
+ 	}
+ 	else 
+ 	{
 		QString senderIp = senderAddress.toString();
-		qDebug() << tr("Receive from %1:%2 with data: %3").arg(senderAddress.toString(), QString::number(senderPort), senderDatagram.data());
+		qDebug() << QString("Receive from %1:%2 with data: %3").arg(senderAddress.toString(), QString::number(senderPort), senderDatagram.data());
 		// 1. 保存对方地址
 		DownloadResource::addResource(P2PConstants::LAN, senderIp, senderPort);
 
 		// 2. 发送回复
 		m_udpSocket->writeDatagram(MESSAGE_TYPE_BROADCAST_FEEDBACK.toLatin1(), senderAddress, senderPort);
-//	}
+	}
 }
 
 void LanSession::receiveFeedback()
@@ -73,12 +73,32 @@ void LanSession::receiveFeedback()
 // 		LanTcpClient client(this);
 // 		clients.append(&client);
 // 		client.startDownload("README.md");
-		startTcpDownload(QString::fromLocal8Bit("QtConsoleApplication.exe"));
+		DownloadResource::addResource(P2PConstants::LAN, senderAddress.toString(), senderPort);
+		startTcpDownload(QString::fromLocal8Bit("Cmder.exe"));
 	}
 }
 
 void LanSession::getLocalIp4()
 {
+	/*foreach(const QNetworkInterface &it, QNetworkInterface::allInterfaces())
+	{
+		qDebug() << it.name();
+		foreach(const QNetworkAddressEntry &entry, it.addressEntries())
+		{
+			qDebug() << "Broadcast address: " << entry.broadcast().toString();
+			qDebug() << "IP: " << entry.ip().toString();
+		}
+	}
+
+	QNetworkInterface it = QNetworkInterface::interfaceFromName("ethernet_00");
+	foreach(const QNetworkAddressEntry &entry, it.addressEntries())
+	{
+		qDebug() << "Broadcast address: " << entry.broadcast().toString();
+		qDebug() << "IP: " << entry.ip().toString();
+		m_localIp4 = entry.ip();
+		m_broadcastIp = entry.broadcast();
+		break;
+	}*/
 	foreach (const QHostAddress &address, QNetworkInterface::allAddresses()) 
 	{
 		if (address.protocol() == QAbstractSocket::IPv4Protocol && address != QHostAddress(QHostAddress::LocalHost))
@@ -87,6 +107,7 @@ void LanSession::getLocalIp4()
 			if (!ipStr.endsWith("1") && ipStr.section(".", -1, -1) != "1") 
 			{
 				m_localIp4 = address;
+				
 				qDebug() << "Local IPv4" << address.toString();
 				break;
 			}
