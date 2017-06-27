@@ -71,6 +71,7 @@ void LanTcpServerHanlder::sendResponse(QString parm)
 	if (!file.open(QIODevice::ReadOnly))
 	{
 		qDebug() << "Cannot read file " << filePath;
+		m_socket->disconnectFromHost();
 		return;
 	}
 	while (1)
