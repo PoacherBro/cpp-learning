@@ -9,7 +9,16 @@
 
 2. 运行`main`程序  
 * windows  
-![](../images/ex1_1.png)
+![](../images/ex1_1.png)  
+
+## 练习 1.2  
+> 改写程序，让它返回-1,。返回值-1通常被当作程序错误的标识。重新编译并运行你的程序，观察你的系统如何处理`main`返回的错误标识。  
+
+* Windows 
+![](../images/ex1_2.png)  
+
+* Linux  
+返回**255**，原因查看[这里](http://www.tldp.org/LDP/abs/html/exitcodes.html)。
 
 ## 引用
 1. [C++ 编译&运行时遇到的坎](http://www.jianshu.com/p/cc2b98c27f6c)
