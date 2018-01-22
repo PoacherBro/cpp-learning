@@ -4,7 +4,7 @@
 #include "QtCore"
 #include "QtNetwork"
 
-class LanTcpClient : public QObject
+class LanTcpClient : public QThread
 {
 	Q_OBJECT
 
@@ -13,9 +13,13 @@ public:
 	~LanTcpClient();
 
 	void startDownload(QString downloadBlockMd5);
+
+protected:
+	void run();
+
 private:
 	QTcpSocket* m_tcpSocket;
-	quint16 m_contentSize;
+	quint32 m_contentSize;
 
 private:
 	QStringList getLanServerInfo();

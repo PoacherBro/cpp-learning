@@ -10,7 +10,7 @@ int main(int argc, char *argv[])
 	QCoreApplication a(argc, argv);
 // 	LanTcpServer lanServer;
 // 	lanServer.startServer(LAN_TCP_SERVER_PORT);
- 	LanSession lanSession;
+ 	LanSession lanSession(&a);
 // 	LanTcpClient client;
 // 	client.startDownload("README.md");
 	return a.exec();

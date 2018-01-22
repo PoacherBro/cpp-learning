@@ -3,7 +3,7 @@
 #include "P2PConstants.h"
 
 LanTcpClient::LanTcpClient(QObject* parent)
-	: QObject(parent),
+	: QThread(parent),
 	m_contentSize(0)
 {
 	m_tcpSocket = new QTcpSocket(this);
@@ -69,7 +69,7 @@ void LanTcpClient::readyReceiveBlock()
 	QDataStream in(m_tcpSocket);
 	in.setVersion(QDataStream::Qt_5_5);
 	if (m_contentSize == 0) {
-		if (m_tcpSocket->bytesAvailable() < (int) sizeof(quint16))
+		if (m_tcpSocket->bytesAvailable() < (int) sizeof(quint32))
 			return;
 		in >> m_contentSize;
 	}
@@ -78,8 +78,9 @@ void LanTcpClient::readyReceiveBlock()
 
 	QString fileName;
 	// get sending file name
-	// in >> fileName;
-	QByteArray line = m_tcpSocket->readAll();
+	in >> fileName;
+	QByteArray line;
+	in >> line;
 
 	QString filePath = "."; // your file path for receiving  
 	fileName = "README.md"; // fileName.section("/", -1);
