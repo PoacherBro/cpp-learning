@@ -29,7 +29,7 @@
 int main()
 {
     std::cout << "Hello, World" << std::endl;
-    return -1;
+    return 0;
 }
 ```
 
@@ -46,10 +46,10 @@ int main()
     std::cin >> v1 >> v2;
     std::cout << "The product of " << v1 << " and " << v2
               << " is " << v1 * v2 << std::endl;
-    return -1;
+    return 0;
 }
 ```
-> 其实我们在使用乘法时，特别要注意数值越界的情况  
+> 其实我们在使用乘法时，应该是所有数值操作是，特别要注意数值**越界**的情况  
 ![](../images/ex1_4.png)  
 
 
