@@ -52,6 +52,44 @@ int main()
 > 其实我们在使用乘法时，应该是所有数值操作是，特别要注意数值**越界**的情况  
 ![](../images/ex1_4.png)  
 
+## 练习 1.5
+> 我们将所有输出操作放在一条很长的语句中。重写程序，将每个运算对象的打印操作放在一条独立语句中。  
+
+```cpp
+ #include <iostream>
+ 
+int main()
+{
+    std::cout << "Enter two numbers: " << std::endl;
+    int v1 = 0, v2 = 0;
+    std::cin >> v1 >> v2;
+    std::cout << "The sum of ";
+    std::cout << v1;
+    std::cout << " and ";
+    std::cout << v2;
+    std::cout << " is ";
+    std::cout << v1 + v2;
+    std::cout << std::endl; // Don't forget to add "endl" to flush content
+}
+```
+
+注意最后的`std::endl`，这是一个被称为**操作符（manipulator）**的特殊值。写入`endl`的效果是结束当前行，并将于设备关联的缓冲区（buffer）中的内容刷到设备中。缓冲刷新操作可以保证到目前为止程序所产生的所有输出都真正写入输出流中，而不是仅仅停留在内容中等待写入流。  
+
+## 练习 1.6
+> 解释下面程序片段是否合法。  
+> ```cpp
+> std::cout << "The sum of " << v1;
+>           << " and " << v2;
+>           << " is " << v1 + v2 << std::endl;
+> ```
+> 如果程序是合法的，它输出什么？如果程序不合法，原因何在？应该如何修正？  
+
+此程序不合法，在编译阶段会报出错误：  
+```
+error: expected primary-expression before ‘<<’ token
+```
+因为在程序没有结束之前有`;`，只需要移除第一行、第二行末尾的逗号就行。
+
 
 
 ## 引用
