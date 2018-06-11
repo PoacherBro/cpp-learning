@@ -43,6 +43,7 @@ packages/
 *.dll
 *.dylib
 *.sdf
+*.out
 
 # Qt-es
 
