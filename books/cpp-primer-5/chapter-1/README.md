@@ -73,7 +73,7 @@ int main()
 }
 ```
 
-注意最后的`std::endl`，这是一个被称为**操作符（manipulator）**的特殊值。写入`endl`的效果是结束当前行，并将于设备关联的缓冲区（buffer）中的内容刷到设备中。缓冲刷新操作可以保证到目前为止程序所产生的所有输出都真正写入输出流中，而不是仅仅停留在内容中等待写入流。  
+注意最后的`std::endl`，这是一个被称为 **操作符（manipulator）** 的特殊值。写入`endl`的效果是结束当前行，并将于设备关联的缓冲区（buffer）中的内容刷到设备中。缓冲刷新操作可以保证到目前为止程序所产生的所有输出都真正写入输出流中，而不是仅仅停留在内容中等待写入流。  
 
 ## 练习 1.6
 > 解释下面程序片段是否合法。  
@@ -90,7 +90,61 @@ error: expected primary-expression before ‘<<’ token
 ```
 因为在程序没有结束之前有`;`，只需要移除第一行、第二行末尾的逗号就行。
 
+## 练习 1.7
+> 编译一个包含不正确的嵌套注释的程序，观察编译器返回的错误信息。
 
+源码：
+```cpp
+#include <iostream>
+
+/* This is a nested test
+ * and this comment contains /* */
+ */
+int main()
+{
+    std::cout << "Enter two numbers: " << std::endl;
+    int v1 = 0, v2 = 0;
+    std::cin >> v1 >> v2;
+    std::cout << "The sum of ";
+    std::cout << v1;
+    std::cout << " and ";
+    std::cout << v2;
+    std::cout << " is ";
+    std::cout << v1 + v2;
+    std::cout << std::endl; // Don't forget to add "endl" to flush content
+
+}
+```
+
+编译之后错误是：   
+```
+ex1_5.cpp:5:3: error: expected unqualified-id before ‘/’ token
+  */
+   ^
+```
+
+# 练习 1.8
+> 指出下列哪些输出语句是合法的（如果有的话）：  
+> ```cpp
+> std::cout << "/*";
+> std::cout << "*/";
+> std::cout << /* "*/" */;
+> std::cout << /* "*/" /* "/*" */;
+> ```
+> 预测编译这些语句会产生什么样的结果，实际编译这些语句来验证你的答案（编写一个小程序，每次将上述一条语句作为其主体），改成每个编译错误。
+
+编译之后的结果如下：  
+![](../images/ex1_8.png)  
+
+修正，在第三条语句中的最后添加一个双引号，整个程序都可以运行：  
+```cpp
+std::cout << /* "*/" */";
+std::cout << /* "*/" /* "/*" */;
+```
+打印出来结果：  
+```cpp
+/**/ */ /* 
+```
 
 ## 引用
 1. [C++ 编译&运行时遇到的坎](http://www.jianshu.com/p/cc2b98c27f6c)
