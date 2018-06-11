@@ -123,7 +123,7 @@ ex1_5.cpp:5:3: error: expected unqualified-id before ‘/’ token
    ^
 ```
 
-# 练习 1.8
+## 练习 1.8
 > 指出下列哪些输出语句是合法的（如果有的话）：  
 > ```cpp
 > std::cout << "/*";
@@ -145,6 +145,183 @@ std::cout << /* "*/" /* "/*" */;
 ```cpp
 /**/ */ /* 
 ```
+
+## 练习 1.9
+> 编写程序，使用`while`循环将50到100的整数相加。
+```cpp
+#include <iostream>
+
+int main()
+{
+    int sum = 0, val = 50;
+
+    while (val <= 100)
+    {
+        sum += val;
+       ++val;
+    }
+    std::cout << "Sum of 50 to 100 inclusive is "
+              << sum << std::endl;
+   return 0;
+}
+```
+结果：  
+```cpp
+Sum of 50 to 100 inclusive is 3825
+```
+
+## 练习 1.10
+> 除了++运算符将运算对象的值增加1之外，还有一个递减运算符（--）实现将值减少1。编写程序，使用递减运算符在循环中按递减顺序打印出10到0之间的整数。
+```cpp
+#include <iostream>
+
+int main()
+{
+    int val = 10
+    while (val >= 0)
+    {
+        std::cout << val << std::endl;
+        --val;   
+    }
+    return 0;
+}
+```
+## 练习 1.11
+> 编写程序，提示用户输入两个整数，打印出这两个整数所指定的范围内的所有整数。
+```cpp
+#include <iostream>
+ 
+int main()
+{
+    int v1 = 0, v2 = 0;
+    std::cout << "Input two numbers:";
+    std::cin >> v1 >> v2;
+ 
+    // 确保 v1 <= v2
+    if (v1 > v2)
+    {
+        int tmp = v1;
+        v1 = v2;
+        v2 = tmp;
+    }
+
+    while (v1 <= v2)
+    {
+        std::cout << v1 << " ";
+        ++v1;
+    }
+    std::cout << std::endl;
+    
+    return 0;
+}
+```
+
+## 练习 1.12
+> 下面的`for`循环完成了什么功能？`sum`的终值是多少？
+> ```cpp
+> int sum = 0;
+> for (int i = -100; i <= 100; ++i)
+>     sum += i;
+> ```
+
+`for`循环实现了-100到100之间整数相加。最后结果为0。
+
+## 练习 1.13
+> 使用`for`循环做1.4.1节中的所有练习。
+
+**练习1.9：**  
+```cpp
+#include <iostream>
+
+int main()
+{
+    int sum = 0;
+    for (int i = 50; i <= 100; ++i)
+        sum += i;
+
+    std::cout << "Sum of 50 to 100 inclusive is "
+              << sum << std::endl;
+   return 0;
+}
+```
+
+**练习1.10：**  
+```cpp
+#include <iostream>
+
+int main()
+{
+    for (int i = 10; i >= 0; --i)
+        std::cout << i << " ";
+    
+    std::cout << std::endl;
+
+    return 0;
+}
+```
+
+**练习1.11：**  
+```cpp
+#include <iostream>
+ 
+int main()
+{
+    int v1 = 0, v2 = 0;
+    std::cout << "Input two numbers:";
+    std::cin >> v1 >> v2;
+ 
+    // 确保 v1 <= v2
+    if (v1 > v2)
+    {
+        int tmp = v1;
+        v1 = v2;
+        v2 = tmp;
+    }
+
+    for (int i = v1; i <= v2; ++i)
+        std::cout << i << " ";
+
+    std::cout << std::endl;
+    
+    return 0;
+}
+```
+
+## 练习1.14
+> 对比`for`循环和`while`循环，两种形式的优缺点各是什么？  
+
+- `for`相比`while`的优点：  
+    - 变量作用域是循环范围内；
+    - 对于递增或者递减变化的循环简洁明了，而`while`还需要其他变量控制。
+- `while`相比`for`的优点：  
+    - 对于只有一个判断条件来说逻辑清晰；
+    - 当使用全局变量来递增或者递减时，可读性更好。
+
+一个StackOverflow上相似的问题：[For vs. while in C programming?](https://stackoverflow.com/questions/2950931/for-vs-while-in-c-programming)  
+
+## 练习1.15
+
+> 编写程序，包含第14页“再探编译”中讨论的常见错误。熟悉编译器生成的错误信息。
+
+自行练习就好。  
+
+## 练习1.16
+> 编写程序，从`cin`读取一组数，输出其和。
+
+```cpp
+#include <iostream>
+
+int main()
+{
+    int sum = 0, val;
+    while(std::cin >> val)
+        sum += val;
+
+    std::cout << sum << std::endl;
+    return 0;
+}
+```
+此处用`while`是觉得对于`std::cin`的判断条件它看起来更加直观。
 
 ## 引用
 1. [C++ 编译&运行时遇到的坎](http://www.jianshu.com/p/cc2b98c27f6c)
