@@ -321,7 +321,100 @@ int main()
     return 0;
 }
 ```
-此处用`while`是觉得对于`std::cin`的判断条件它看起来更加直观。
+此处用`while`是觉得对于`std::cin`的判断条件它看起来更加直观。  
+
+## 练习1.17
+> 如果输入的所有值都是相等的，本节的程序会输出什么？如果没有重复值，输出又会是怎样的？
+
+如果输入的所有值都是相等的，则输出一条结果，代表输入值出现的次数，`cnt`变量。例如：`1 occurs 6 items`  
+如果输入没有重复值，则输出所有输入值出现次数，如下所示：  
+```
+1 occurs 1 items
+2 occurs 1 items
+3 occurs 1 items
+4 occurs 1 items
+5 occurs 1 items
+6 occurs 1 items
+```
+
+注意：判断`std::cin >> val`代表是判断流的状态，如果流是无效的，即遇到文件结束符，或遇到一个无效的输入时（例如读入的值不是一个整数）。  
+- 在Windows系统中，输入文件结束符的方法是Ctrl+Z，然后按Enter或Return键；  
+- 在UNIX系统中（包括Mac OS），文件结束符是Ctrl+D。  
+
+在上面的输出形式，如果是输入一个数字后，再次输入不同数字，后面键入Enter，在Linux系统中会输出新行。
+
+## 练习1.18
+> 编译并运行本节的程序，给它输入全部相等的值。再次运行程序，输入没有重复的值。
+
+- **输入全部相等值：**  
+![](../images/ex1_18_1.png)  
+
+- **输入没有重复的值：**  
+![](../images/ex1_18_2.png)  
+
+## 练习1.19
+> 修改你为1.4.1节练习1.10所编写的程序（打印一个范围内的数），使其能处理用户输入的第一个数比第二个数小的情况。  
+
+可以查看[练习1.11代码](https://github.com/PoacherBro/cpp-learning/blob/master/books/cpp-primer-5/chapter-1/ex1_11.cc)，已经实现。  
+
+## 练习1.20  
+> 在网站http://www.informit.com/title/0321714113 上,第1章的代码目录中包含了头文件`Sales_itme.h`。将它拷贝到你自己的工作目录中。用它编写一个程序，读取一组书籍销售记录，将每条记录打印到标准输出上。  
+
+相关操作符重载已经在头文件实现，此题代码实现逻辑如下：  
+```cpp
+#include <iostream>
+#include "../include/Sales_item.h"
+
+int main()
+{
+    Sales_item item;
+    while (std::cin >> item)
+        std::cout << item << std::endl;
+
+    return 0;
+}
+```
+输出结果：  
+![](../images/ex1_20.png)  
+
+## 练习1.21
+> 编写程序，读取两个ISBN相同的`Sales_item`对象，输出它们的和。  
+
+代码[ex1_21.cc](https://github.com/PoacherBro/cpp-learning/blob/master/books/cpp-primer-5/chapter-1/ex1_21.cc)。此代码在1.5.2章节有。  
+输出：  
+```shell
+$ ex1_21
+0-201-78345-X 3 60
+0-201-78345-X 2 50
+0-201-78345-X 5 280 56
+```
+
+## 练习1.22
+> 编写程序，读取多个具有相同ISBN的销售记录，输出所有记录的和。  
+
+代码[ex1_22.cc](https://github.com/PoacherBro/cpp-learning/blob/master/books/cpp-primer-5/chapter-1/ex1_22.cc)。此代码在1.6章节有。  
+输出：  
+![](../images/ex1_22.png)
+
+## 练习1.23
+> 编写程序，读取多条销售记录，并统计每个ISBN（每本书）有几条销售记录。  
+
+*可参考1.4.4节代码*  
+代码[ex1_23.cc](https://github.com/PoacherBro/cpp-learning/blob/master/books/cpp-primer-5/chapter-1/ex1_23.cc)。此代码在1.6章节有。  
+
+## 练习1.24
+> 输入表示多个ISBN的多条销售记录来测试上一个程序，每个ISBN的记录应该聚在一起。  
+
+使用`../data/book_sales`里面记录测试就行。  
+输出：  
+![](../images/ex1_24.png)  
+
+## 练习1.25
+> 借助网上的Sales_item.h头文件，编译并运行本节给出的书店程序。  
+
+代码可以看[ex1_22.cc](https://github.com/PoacherBro/cpp-learning/blob/master/books/cpp-primer-5/chapter-1/ex1_22.cc)。  
+输出结果一样。  
+
 
 ## 引用
 1. [C++ 编译&运行时遇到的坎](http://www.jianshu.com/p/cc2b98c27f6c)
