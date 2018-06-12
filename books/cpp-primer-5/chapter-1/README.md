@@ -400,7 +400,7 @@ $ ex1_21
 > 编写程序，读取多条销售记录，并统计每个ISBN（每本书）有几条销售记录。  
 
 *可参考1.4.4节代码*  
-代码[ex1_23.cc](https://github.com/PoacherBro/cpp-learning/blob/master/books/cpp-primer-5/chapter-1/ex1_23.cc)。此代码在1.6章节有。  
+代码[ex1_23.cc](https://github.com/PoacherBro/cpp-learning/blob/master/books/cpp-primer-5/chapter-1/ex1_23.cc)。  
 
 ## 练习1.24
 > 输入表示多个ISBN的多条销售记录来测试上一个程序，每个ISBN的记录应该聚在一起。  
