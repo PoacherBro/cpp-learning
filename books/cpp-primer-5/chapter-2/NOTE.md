@@ -482,5 +482,110 @@ int main()
 关于相关的问题，可以看在我之后有个人问的问题：[SO - Passing non-lvalue as const reference argument. Is the temp created in local scope or caller scope?](https://stackoverflow.com/questions/50869823/passing-non-lvalue-as-const-reference-argument-is-the-temp-created-in-local-sco)  
 
 1. 关于未定义行为可以看[Just For Fun - C++中的未定义行为](https://selfboot.cn/2016/09/18/c++_undefined_behaviours/)。  
-2. 更多关于引用相关的，可以去官网看看[cpp - Reference initialization](http://en.cppreference.com/w/cpp/language/reference_initialization)，关于定义和生命周期说的很详细。
+2. 更多关于引用相关的，可以去官网看看[cpp - Reference initialization](http://en.cppreference.com/w/cpp/language/reference_initialization)，关于定义和生命周期说的很详细。  
 
+
+## 2.4.2 指针和 const
+
+- 常量指针 - 指针这个对象是常量，**必须初始化**，并且初始化后不能改变这个指针的地址。但是依然可以改变指针指向那个对象的值。  
+- 指向常量的指针 - 指针指向的对象是一个常量，此时可以改变指针的地址，但是不能改变指向的那个对象的值。  
+
+```cpp
+int errNumb = 0;
+int *const curErr = &errNumb;
+const double pi = 3.14159;
+const double *const pip = &pi;
+```
+如上代码，如何明确声明的含义，最有效的方法是：**从右向左阅读**。  
+离`curErr`最近的是`const`，代表`curErr`本身是一个常量对象，对象类型由声明符的其余部分确定。声明符下一个符号是 `*`，意思是`curErr`是一个常量指针。最后，该声明语句的基本数据类型部分确定了常量指针指向的是一个`int`对象。  
+
+记住：变量的定义包括一个基本数据类型和一组声明符。**类型修饰符只是声明符的一部分**。  
+
+## 2.4.3 顶层 const
+
+- 顶层const - top-level const，表示任意对象是常量，对任何数据类型都有效，包括算数类型、类和指针。  
+- 底层const - low-level const，与指针和引用等复合类型有关。表示指针所指对象是一个常量。  
+
+指针比较特殊，既可以是顶层const，也可以是底层const。  
+
+**对于对象拷贝（拷贝不影响被拷贝对象的值）**：  
+- 顶层const不受影响  
+- 底层const拷贝必须是具有相同底层const，或者两个对象的数据类型必须能够转换。一般来说，非常量可以转换成常量，反之则不行。  
+
+## 2.4.4 constexpr和常量表达式  
+
+**常量表达式（const expression）** 是指值不会改变并且在编译过程就能得到计算结果的表达式。  
+一个对象（或表达式）是不是常量表达式由它的数据类型和初始值共同决定。  
+
+属于常量表达式：
+- 字面值  
+- 用常量表达式初始化的`const`对象  
+
+然而需要注意：  
+- 如果数据类型是普通类型，就算字面值是常量，也不是常量表达式。例如：`int i = 27;`  
+- 如果表达式结果需要运行时才获取，也不是常量表达式。例如：`const int sz = get_size();`
+
+### constexpr 变量  
+
+C++11 标准规定，允许将变量声明为**constexpr**类型以便由编译器来验证变量的值是否是一个常量表达式。  
+
+- `const`用于运行时常量  
+- `constexpr`用于编译器常量  
+
+当然有一个特例：  
+已由常量表达式初始化的、带const限定符（且不带volatile限定符）的、整数类型或枚举类型的变量，可以当做编译期常量来用。
+
+### 字面值类型
+
+类型简单，值显而易见、容易得到，称为“字面值类型”。包括：  
+- 算术类型  
+- 引用  
+- 指针  
+
+自定义类、IO库、string类型则不属于。也不能定义为`constexpr`。  
+
+`constexpr`指针必须有初始值，并且是`nullptr`或者0，或者是存储于某个固体地址中的对象。  
+
+函数体内的变量一般来说并非存放在固定地址中，`constexpr`不能指向这样的变量，函数体之外的变量地址固定不变，可以用`constexpr`初始化指针。  
+
+### 指针和 constexpr
+
+`constexpr`声明的指针只对指针有效，和指针所指对象无关。  
+
+# 2.5 处理类型  
+
+## 2.5.1 类型别名  
+
+利用`typedef`定义一种类型的别名。例如：  
+```cpp
+typedef double wages; // wages是double的别名
+
+```
+
+`typedef`作为声明语句中基本数据类型的一部分。  
+
+C++11 使用`using`作为**别名声明**来定义类型的别名：  
+```cpp
+using SI = Sales_item; // SI是Sales_item的同义词
+```
+
+### 指针、常量和类型别名  
+
+```cpp
+typedef char *pstring;  // pstring是 char * 的别名
+const pstring cstr = 0; // cstr是指向char的常量指针
+const pstring *ps;      // ps是一个指针，它的对象是指向char的常量指针
+```
+
+不能简单的把类型别名代入声明语句来解读，这是错误的。而是应该把别名当作一个类型来解读。
+
+## 2.5.2 auto类型说明符
+
+C++11引入 `auto`类型说明符，用它能让编译器去分析表达式所属的类型。  
+`auto`定义的变量必须有初始值。（所以建议多用`auto`）
+
+### 复合类型、常量和auto
+
+编译器推断出来的`auto`类型有时候和初始值的类型并不完全一样，编译器会适当地改变结果类型使其更符合初始化规则。  
+- 使用引用初始化`auto`变量时，其实是用引用对象的值，而不是引用  
+- `auto`一般会忽略顶层const，同时底层const会保留下来  
