@@ -12,4 +12,6 @@ int main()
     const int e = 0;
     // 指向对象是一个常量 low-level const
     const int *pe = &e;
+
+    int null = 0, *p = &null; // ERROR, *p = null 不行，指针初始值只能是nullptr, 0或某对象地址
 }
