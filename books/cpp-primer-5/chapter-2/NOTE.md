@@ -587,5 +587,56 @@ C++11引入 `auto`类型说明符，用它能让编译器去分析表达式所�
 ### 复合类型、常量和auto
 
 编译器推断出来的`auto`类型有时候和初始值的类型并不完全一样，编译器会适当地改变结果类型使其更符合初始化规则。  
-- 使用引用初始化`auto`变量时，其实是用引用对象的值，而不是引用  
-- `auto`一般会忽略顶层const，同时底层const会保留下来  
+- 使用引用初始化`auto`变量时，其实是用引用对象的值，而不是引用。  
+- `auto`一般会忽略顶层const，同时底层const会保留下来。然而设置一个类型为`auto`引用时，初始值中的顶层常量仍然保留。  
+
+## 2.5.3 decltype类型指示符  
+
+`decltype`从表达式或者变量推断相应的类型，并且不会计算表达式的值。  
+
+`decltype`使用变量时，会保留顶层const和引用。  
+引用从来都是作为其所指对象的同义词出现，只有用在`decltype`处是一个类型修饰。  
+
+### decltype 和引用
+
+- 如果使用的是表达式，则返回表达式结果对应的类型。**对于指针解引用操作，返回的是引用**；  
+- 如果使用变量，则分两种情况：  
+    1. 如果使用单括号，`decltype(i) d;`，则结果就是变量的类型；  
+    2. 如果使用双括号或多层括号，`decltype((i)) e;`，则编译器会当作为表达式，结果就是引用类型。  
+
+赋值会产生引用的一类典型表达式，引用的类型就是左值的类型。也就是说，如果`i`是`int`，则表达式`i = x`的类型是`int&`。  
+
+### decltype 和 auto 的区别  
+
+`decltype`和`auto`都是通过推导来获取类型，但是两者的差别是：  
+- 对于顶层const和引用的处理：  
+    `decltype`会保留表达式或者变量的顶层const和引用，而`auto`不会。  
+- `decltype`可以推断表达式的返回类型，而`auto`只能通过变量来推导。  
+
+参考：  
+- [SO - decltype vs auto](https://stackoverflow.com/questions/12084040/decltype-vs-auto)  
+- [SO - What is the difference between auto and decltype(auto) when returning from a function?](https://stackoverflow.com/questions/21369113/what-is-the-difference-between-auto-and-decltypeauto-when-returning-from-a-fun#)  
+
+
+# 2.6 自定义数据结构
+
+```cpp
+struct Sales_data {
+    std::string bookNo;
+    unsigned units_sold = 0;
+    double revenue = 0.0;
+}; // 必须要分号，因为后面可以定义Sales_data的对象
+```
+
+定义对象：  
+```cpp
+struct Sales_data { /*.....*/ } accum, trans, *salesptr;
+
+// 与上一条语句等价，但是可读性更好
+struct Sales_data { /*.....*/ }; // 注意分号
+Sales_data accum, trans, *salesptr;
+```
+
+**建议**：最好把类的定义和对象的定义分开，否则容易混淆。  
+
+在C++11规定，可以为数据成员提供一个类初始值（in-class initializer）。没有初始值的成员将被默认初始化。  
