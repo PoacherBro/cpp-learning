@@ -14,4 +14,6 @@ int main()
     const int *pe = &e;
 
     int null = 0, *p = &null; // ERROR, *p = null 不行，指针初始值只能是nullptr, 0或某对象地址
+
+    return 0;
 }

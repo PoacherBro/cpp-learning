@@ -22,6 +22,8 @@ int main()
     const int j = 34;
 
     p = &j; // OK, p is int *
-    //*p = j; // ERROR, p is pointered const int
+    *p = j; // ERROR, p is pointered const int
+
+    return 0;
  
 }

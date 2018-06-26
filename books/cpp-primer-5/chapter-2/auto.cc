@@ -44,4 +44,6 @@ int main()
 
     const auto tj2 = ti, &tk2 = ti; // j2是const int类型，k2是绑定const int的常量引用
     std::cout << typeid(tj2).name() << " " << typeid(tk2).name() << std::endl;
+
+    return 0;
 }
