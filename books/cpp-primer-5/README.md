@@ -13,5 +13,5 @@
 ## 参考
 
 - [孟岩 - 快速掌握一个语言最常用的50%](https://blog.csdn.net/myan/article/details/3144661)  
-- [pezy/Github - CppPrimer](https://github.com/pezy/CppPrimer) - 习题答案参考
+- [Github - pezy/CppPrimer](https://github.com/pezy/CppPrimer) - 习题答案参考
 
