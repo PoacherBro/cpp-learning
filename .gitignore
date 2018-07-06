@@ -71,3 +71,9 @@ Makefile*
 
 # QtCtreator CMake
 CMakeLists.txt.user*
+
+# compress files
+*.zip
+*.tar
+*.rar
+*.tar.gz
