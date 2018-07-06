@@ -108,3 +108,28 @@
 > 对于 104 页的程序来说，如果不初始化 `scores`将发生什么？
 
 `scores`是一个数组，如果不初始化它，那么这个数组就是 undefined，它的元素的值是未知。
+
+## 练习 3.34
+
+> 假定 p1 和 p2 指向同一个数组中的元素，则下面程序的功能是什么？什么情况下改程序是非法的？
+>
+> ```cpp
+> p1 += p2 - p1;
+> ```
+
+程序相当于 `p1 = p2`。
+
+如果 `p1` 和 `p2` 是合法的，则这段程序一直都是合法的。
+
+## 练习 3.35
+
+> 编写一段程序，利用指针将数组中的元素置为 0
+
+[ex3_35.cc](https://github.com/PoacherBro/cpp-learning/blob/master/books/cpp-primer-5/chapter-3/ex3_35.cc)
+
+## 练习 3.36
+
+> 编写一段程序，比较两个数组是否相等。再编写一段程序，比较两个 `vector` 对象是否相等。
+
+[ex3_36.cc](https://github.com/PoacherBro/cpp-learning/blob/master/books/cpp-primer-5/chapter-3/ex3_36.cc)
+
