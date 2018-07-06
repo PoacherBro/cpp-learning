@@ -133,3 +133,97 @@
 
 [ex3_36.cc](https://github.com/PoacherBro/cpp-learning/blob/master/books/cpp-primer-5/chapter-3/ex3_36.cc)
 
+## 练习 3.37
+
+> 下面的程序是何意义，程序的输出结果是什么？
+>
+> ```cpp
+> const char ca[] = {'h', 'e', 'l', 'l', 'o'};
+> const char *cp = ca;
+> while (*cp) {
+>     cout << *cp << endl;
+>     ++cp;
+> }
+> ```
+
+输出字符数组 `ca` 的所有字符，但是因为没有空字符结尾，在VS2017中会打印其他乱码字符，并且在遇到 `'\0'` 后才停止输出。不过在 g++ 8.1 版本中，会正确输出所有字符，没有多余字符，可能是 `ca` 所在内存下一个刚好有一个结束的空字符。
+
+**注意！！！** 当用到字符串时，编译器会把值放到一个`.rodata`区域。上面代码用到C风格字符串但是没有在末尾加上空字符，所以当我们写这样的代码时：
+
+```cpp
+const char ca[] = {'h', 'e', 'l', 'l', 'o'};
+const char s[] = "world";
+const char *cp = ca;
+while (*cp) {
+    cout << *cp;
+    ++cp;
+}
+```
+
+会打印出 "helloworld"。因为在`.rodata`区域，字符列表会存储成这样
+
+```
+h e l l o w o r l d \0
+```
+
+`while (*cp)` 只是判断 `*cp` 是否为0。当 `*cp` 不为 0 时，会打印出 `cp` 所指对象的值。如果把代码改成这样：
+
+```cpp
+const char ca[] = {'h', 'e', 'l', 'l', 'o', '\0'};
+```
+
+在`.rodata`区域字符列表就是这样：
+
+```
+h e l l o \0 w o r l d \0
+```
+
+这样程序才会运行正确。**在用到C风格字符串的时候一定要小心！！！**
+
+> 可以通过命令 ` hexdump -C a.out` 查看 `.rodata`。
+
+
+
+## 练习 3.38
+
+> 在本节中我们提到，将两个指针相加不但是非法的，而且也没有什么意义。请问为什么两个指针相加没什么意义？
+
+两个指针可以相减，表示两者之间在内存位置的距离。指针与一个整型数相加或相减表示指针向上或向下移动多少距离。而位置与位置相加，语义上来讲都是毫无意义的。
+
+参考：[Why can't I add pointers](https://stackoverflow.com/questions/2935038/why-cant-i-add-pointers)
+
+
+
+## 练习 3.39
+
+> 编写一段程序，比较两个 `string` 对象。再编写一段程序，比较两个C风格字符串的内容。
+
+[ex3_39.cc](https://github.com/PoacherBro/cpp-learning/blob/master/books/cpp-primer-5/chapter-3/ex3_39.cc)
+
+
+
+## 练习 3.40
+
+> 编写一段程序，定义两个字符数组并且用字符串字面值初始化它们；接着再定义一个字符数组存放前两个数组连接后的结果。使用 `strcpy` 和 `strcat` 把前两个数组的内容拷贝到第三个数组中。
+
+[ex3_40.cc](https://github.com/PoacherBro/cpp-learning/blob/master/books/cpp-primer-5/chapter-3/ex3_40.cc)
+
+**注意**：代码在g++ 8.1下可以运行，但是在VS2017有问题，因为g++允许不是常量表达式的变量声明数组维度，但是在VS2017不行。
+
+并且在VS2017里不允许`strcpy`和`strcat`，必须用`strcpy_s`和`strcat_s`或者用`_CRT_SECURE_NO_WARNING`屏蔽错误，而这两个方法在g++是没有实现的。所以在VS2017需要修改代码如下：
+
+```cpp
+const char cstr1[] = "hello";
+const char cstr2[] = "world";
+
+size_t new_size = strlen(cstr1) + strlen(cstr2) + 1;
+char *cstr3 = new char[new_size];
+
+strcpy_s(cstr3, new_size, cstr1);
+strcat_s(cstr3, new_size, cstr2);
+
+cout << cstr3 << endl;
+// 一定要delete掉new分配的内存，否则会出现内存泄露
+delete[] cstr3;
+```
+
