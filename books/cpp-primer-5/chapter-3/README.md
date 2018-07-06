@@ -208,9 +208,9 @@ h e l l o \0 w o r l d \0
 
 [ex3_40.cc](https://github.com/PoacherBro/cpp-learning/blob/master/books/cpp-primer-5/chapter-3/ex3_40.cc)
 
-**注意**：代码在g++ 8.1下可以运行，但是在VS2017有问题，因为g++允许不是常量表达式的变量声明数组维度，但是在VS2017不行。
+**注意**：代码在g++ 8.1下可以运行，但是在VS2017有问题，因为g++允许不是常量表达式的变量声明数组维度，但是在VS2017不行。参考：[GCC allowing arrays to be initialized with variable length](https://stackoverflow.com/questions/19340544/gcc-allowing-arrays-to-be-initialized-with-variable-length)
 
-并且在VS2017里不允许`strcpy`和`strcat`，必须用`strcpy_s`和`strcat_s`或者用`_CRT_SECURE_NO_WARNING`屏蔽错误，而这两个方法在g++是没有实现的。所以在VS2017需要修改代码如下：
+ 并且在VS2017里不允许用`strcpy`和`strcat`，必须用`strcpy_s`和`strcat_s`或者用`_CRT_SECURE_NO_WARNING`屏蔽错误，而这两个方法在g++是没有实现的。所以在VS2017需要修改代码如下：
 
 ```cpp
 const char cstr1[] = "hello";
