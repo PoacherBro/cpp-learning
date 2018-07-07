@@ -8,3 +8,8 @@ A toy which implemented [Proactor](https://en.wikipedia.org/wiki/Proactor_patter
 Dev env: Windows 10 Professional  
 Build: VS2017  
 
+## Reference
+
+- [I/O pattern](https://github.com/PoacherBro/cpp-learning/blob/master/projects/simpleuv/doc/io_pattern.md)  
+- Reactor pattern  
+- Proactor pattern  
