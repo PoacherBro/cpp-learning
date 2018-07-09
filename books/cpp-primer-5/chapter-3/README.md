@@ -227,3 +227,21 @@ cout << cstr3 << endl;
 delete[] cstr3;
 ```
 
+
+
+## 练习 3.41
+
+> 编写一段程序，用整型数组初始化一个`vector`对象。
+
+[ex3_41.cc](https://github.com/PoacherBro/cpp-learning/blob/master/books/cpp-primer-5/chapter-3/ex3_41.cc)
+
+
+
+## 练习 3.42
+
+> 编写一段程序，将含有整数元素的`vector`对象拷贝给一个整型数组。
+
+[ex3_42.cc](https://github.com/PoacherBro/cpp-learning/blob/master/books/cpp-primer-5/chapter-3/ex3_42.cc)
+
+
+
