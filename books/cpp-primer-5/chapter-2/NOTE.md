@@ -559,7 +559,6 @@ C++11 标准规定，允许将变量声明为**constexpr**类型以便由编译�
 利用`typedef`定义一种类型的别名。例如：  
 ```cpp
 typedef double wages; // wages是double的别名
-
 ```
 
 `typedef`作为声明语句中基本数据类型的一部分。  

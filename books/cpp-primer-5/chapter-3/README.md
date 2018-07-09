@@ -245,3 +245,25 @@ delete[] cstr3;
 
 
 
+## 练习 3.43
+
+> 编写3个不同版本的程序，令其均能输出 ia 的元素。版本1使用范围`for`语句管理迭代过程；版本2和版本3都是用普通的`for`语句，其中版本2要求用下标运算符，版本3要求用指针。此外，在所有3个版本的程序中都要直接写出数据类型，而不能使用类型别名、`auto`关键字或`decltype`关键字
+
+[ex3_43.cc](https://github.com/PoacherBro/cpp-learning/blob/master/books/cpp-primer-5/chapter-3/ex3_43.cc)
+
+
+
+## 练习 3.44
+
+> 改写上一个练习中的程序，使用类型别名来代替循环控制变量的类型。
+
+[ex3_44.cc](https://github.com/PoacherBro/cpp-learning/blob/master/books/cpp-primer-5/chapter-3/ex3_44.cc)
+
+
+
+## 练习 3.45
+
+> 再一次改写程序，这次使用`auto`关键字。
+
+[ex3_45.cc](https://github.com/PoacherBro/cpp-learning/blob/master/books/cpp-primer-5/chapter-3/ex3_45.cc)
+
