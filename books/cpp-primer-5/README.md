@@ -10,6 +10,17 @@
 
 
 
+## 代码环境
+
+- Linux
+  - OS: ArchLinux
+  - Compiler: g++ 8.1.1
+- Windows
+  - OS: Windows 10 Professional
+  - Compiler: VS2017 Enterprise
+
+
+
 ## 参考
 
 - [孟岩 - 快速掌握一个语言最常用的50%](https://blog.csdn.net/myan/article/details/3144661)  
