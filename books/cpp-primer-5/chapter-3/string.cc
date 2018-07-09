@@ -55,6 +55,13 @@ int test()
     return 0;
 }
 
+void string_vs_cstr()
+{
+    string str = "hello";
+    str += "world";
+
+}
+
 int main()
 {
     convert_digit_to_hexadecimal();
